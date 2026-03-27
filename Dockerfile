@@ -8,6 +8,5 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 ENV LETTA_API_KEY=""
-ENV ENV_NAME="cloud"
 
-CMD ["sh", "-c", "letta server --env-name \"$ENV_NAME\""]
+CMD ["letta", "server"]
