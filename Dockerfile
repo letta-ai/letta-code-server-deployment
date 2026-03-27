@@ -1,6 +1,11 @@
 FROM node:20-slim
 
-RUN npm install -g @letta-ai/letta-code
+RUN apt-get update && \
+    apt-get install -y python3 make g++ && \
+    npm install -g @letta-ai/letta-code && \
+    apt-get purge -y python3 make g++ && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/*
 
 ENV LETTA_API_KEY=""
 ENV ENV_NAME="cloud"
