@@ -1,0 +1,5 @@
+services:
+  letta-server:
+    build: .
+    restart: always
+    env_file: .env
