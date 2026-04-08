@@ -12,4 +12,6 @@ RUN apt-get update && \
 # Override the bundle with our dev build (includes OAuth device flow)
 COPY letta.js /opt/letta-code/node_modules/@letta-ai/letta-code/letta.js
 
-CMD ["letta", "server", "--debug"]
+ENV ENV_NAME="railway"
+
+CMD ["sh", "-c", "letta server --env-name \"$ENV_NAME\" --debug"]
