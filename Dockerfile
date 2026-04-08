@@ -1,12 +1,8 @@
-FROM node:20-slim
+FROM oven/bun:slim
 
-RUN apt-get update && \
-    apt-get install -y python3 make g++ && \
-    npm install -g @letta-ai/letta-code && \
-    apt-get purge -y python3 make g++ && \
-    apt-get autoremove -y && \
-    rm -rf /var/lib/apt/lists/*
+RUN bun install -g @letta-ai/letta-code
 
 ENV LETTA_API_KEY=""
+ENV ENV_NAME="cloud"
 
-CMD ["letta", "server", "--debug"]
+CMD ["sh", "-c", "letta server --env-name \"$ENV_NAME\""]

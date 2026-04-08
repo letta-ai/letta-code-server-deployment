@@ -1,6 +1,10 @@
 services:
   letta-server:
     build: .
-    hostname: cloud
     restart: always
     env_file: .env
+    volumes:
+      - letta-data:/root
+
+volumes:
+  letta-data:
