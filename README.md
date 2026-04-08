@@ -64,6 +64,37 @@ railway variables set LETTA_API_KEY="your-api-key"
 railway up
 ```
 
+### Modal
+
+Create a secret and launch a sandbox:
+
+```bash
+modal secret create letta-secrets LETTA_API_KEY="your-api-key"
+python modal_launch.py
+```
+
+Modal sandboxes have a 24-hour max timeout. Re-run the script daily or set up a cron.
+
+### Daytona
+
+```bash
+brew install daytonaio/cli/daytona
+daytona login --api-key=YOUR_DAYTONA_API_KEY
+
+daytona create --name letta-remote \
+  --dockerfile Dockerfile \
+  --env LETTA_API_KEY="your-api-key" \
+  --auto-stop 0
+```
+
+Daytona overrides the Dockerfile CMD, so start the server manually:
+
+```bash
+daytona exec letta-remote -- letta server --env-name "daytona" --debug
+```
+
+Or SSH in: `daytona ssh letta-remote`
+
 ## Configuration
 
 | Variable | Default | Description |
