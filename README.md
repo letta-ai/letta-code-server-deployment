@@ -1,10 +1,10 @@
 # Letta Code Remote Deployment
 
-Deploy a [Letta Code](https://docs.letta.com/letta-code) remote environment to any cloud platform. Runs `letta server` so your agent is always-on and accessible from [chat.letta.com](https://chat.letta.com).
+Deploy a [Letta Code](https://docs.letta.com/letta-code) remote environment to any cloud platform. Runs `letta server` so your agent is always-on and accessible from [chat.letta.com](https://chat.letta.com) or the [Letta Code](https://letta.com) desktop app.
 
 ## How it works
 
-`letta server` opens an outbound WebSocket to Letta Cloud. No inbound ports, no reverse proxy, no domain name needed. Just a machine with Node.js.
+`letta server` opens an outbound WebSocket to Letta Cloud. No inbound ports, no reverse proxy, no domain name needed.
 
 ## Authentication
 
@@ -47,8 +47,9 @@ apt-get install -y docker.io docker-compose-v2
 git clone https://github.com/letta-ai/letta-code-server-deployment.git
 cd letta-code-server-deployment
 cp .env.example .env
-# Edit .env
 docker compose up -d
+docker compose logs -f
+# Check the logs for the OAuth URL and approve it in your browser
 ```
 
 If you bootstrap with OAuth over SSH, the saved auth state under `/root/.letta` is reused across restarts.
@@ -92,8 +93,8 @@ railway logs
 ## Verify
 
 1. Deploy using any method above
-2. Open [chat.letta.com](https://chat.letta.com)
-3. Select your environment from the picker
+2. Open [chat.letta.com](https://chat.letta.com) or the [Letta Code](https://letta.com) desktop app
+3. Select your remote environment from the picker (bottom left)
 4. Send a message
 
 ## Docs
