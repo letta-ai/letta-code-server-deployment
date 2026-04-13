@@ -68,6 +68,10 @@ The included `fly.toml` mounts `/root`, so auth survives machine restarts.
 
 ### Railway
 
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/letta-code-remote?utm_medium=integration&utm_source=template&utm_campaign=generic)
+
+Or manually:
+
 1. Connect this repo in [Railway](https://railway.app)
 2. Add a persistent volume mounted at `/root`
 3. Deploy
