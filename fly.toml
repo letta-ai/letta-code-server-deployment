@@ -1,0 +1,17 @@
+app = "letta-remote"
+primary_region = "sjc"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  ENV_NAME = "fly"
+
+[[vm]]
+  memory = "2048mb"
+  cpu_kind = "performance"
+  cpus = 1
+
+[mounts]
+  source = "letta_data"
+  destination = "/root"

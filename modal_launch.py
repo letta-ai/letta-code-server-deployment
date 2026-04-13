@@ -14,7 +14,7 @@ image = (
 
 with modal.enable_output():
     sb = modal.Sandbox.create(
-        "bash", "-c", "letta server --debug",
+        "letta", "server", "--env-name", "modal", "--debug",
         app=app,
         image=image,
         name="letta-server",

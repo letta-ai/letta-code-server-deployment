@@ -1,6 +1,6 @@
 FROM oven/bun:slim
 
-# Install letta-code from npm (for native deps like node-pty)
+# Install Letta Code
 ENV BUN_INSTALL_GLOBAL_DIR=/opt/letta-code
 RUN apt-get update && \
     apt-get install -y python3 make g++ && \
@@ -9,9 +9,6 @@ RUN apt-get update && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
 
-# Override the bundle with our dev build (includes OAuth device flow)
-COPY letta.js /opt/letta-code/node_modules/@letta-ai/letta-code/letta.js
-
-ENV ENV_NAME="railway"
+ENV ENV_NAME="cloud"
 
 CMD ["sh", "-c", "letta server --env-name \"$ENV_NAME\" --debug"]
