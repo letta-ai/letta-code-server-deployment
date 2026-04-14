@@ -8,8 +8,8 @@ primary_region = "sjc"
   ENV_NAME = "fly"
 
 [[vm]]
-  memory = "2048mb"
-  cpu_kind = "performance"
+  memory = "512mb"
+  cpu_kind = "shared"
   cpus = 1
 
 [mounts]
