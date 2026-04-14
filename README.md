@@ -1,5 +1,7 @@
 # Letta Code Remote Deployment
 
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/letta-code-remote?utm_medium=integration&utm_source=template&utm_campaign=generic)
+
 Deploy a [Letta Code](https://docs.letta.com/letta-code) remote environment to any cloud platform. Runs `letta server` so your agent is always-on and accessible from [chat.letta.com](https://chat.letta.com) or the [Letta Code](https://letta.com) desktop app.
 
 ## How it works
@@ -67,10 +69,6 @@ fly logs --app letta-remote
 The included `fly.toml` mounts `/root`, so auth survives machine restarts.
 
 ### Railway
-
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/letta-code-remote?utm_medium=integration&utm_source=template&utm_campaign=generic)
-
-Or manually:
 
 1. Connect this repo in [Railway](https://railway.app)
 2. Add a persistent volume mounted at `/root`
