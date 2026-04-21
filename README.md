@@ -84,6 +84,16 @@ railway logs
 # Check the logs for the OAuth URL and approve it in your browser
 ```
 
+## Updating
+
+The Dockerfile cache-busts on every new `@letta-ai/letta-code` npm release, so any redeploy after a release will pick up the latest version automatically. No config changes or `NO_CACHE=1` workarounds needed — just redeploy:
+
+- **Railway**: click Redeploy, or push an empty commit.
+- **Fly**: `fly deploy`.
+- **Docker Compose**: `docker compose build --pull && docker compose up -d`.
+
+If you want to pin a specific version instead of tracking latest, fork this repo and change the install line in the Dockerfile to `bun install -g @letta-ai/letta-code@<version>`.
+
 ## Configuration
 
 | Variable | Default | Description |
