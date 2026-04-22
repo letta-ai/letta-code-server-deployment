@@ -94,6 +94,47 @@ The Dockerfile cache-busts on every new `@letta-ai/letta-code` npm release, so a
 
 If you want to pin a specific version instead of tracking latest, fork this repo and change the install line in the Dockerfile to `bun install -g @letta-ai/letta-code@<version>`.
 
+## Channels (Telegram, Slack)
+
+Letta Code [channels](https://docs.letta.com/letta-code/channels) let your agent receive and respond to messages from external platforms. Set the relevant env vars and the container bootstraps the channel config automatically on startup.
+
+### Telegram
+
+1. Create a bot via [@BotFather](https://t.me/BotFather), copy the token.
+2. Set `TELEGRAM_BOT_TOKEN` in your service's environment.
+3. Redeploy. The server starts with `--channels telegram` and the Telegram runtime installs on first boot.
+4. DM the bot — it replies with a pairing code.
+5. From the Letta Code desktop app (pointed at this remote server) or via shell on the service, pair the chat to an agent:
+
+   ```bash
+   letta channels pair --channel telegram --code <code> --agent <agent-id>
+   ```
+
+### Slack
+
+1. Create a Slack app using the [manifest in the Letta Code docs](https://docs.letta.com/letta-code/channels#slack-cli). You need both the bot token (`xoxb-...`) and app-level token (`xapp-...`).
+2. Set `SLACK_BOT_TOKEN` and `SLACK_APP_TOKEN` in your service's environment.
+3. Redeploy. The server starts with `--channels slack`.
+4. Bind the Slack app to an agent from the desktop app or via shell:
+
+   ```bash
+   letta channels bind --channel slack --agent <agent-id>
+   ```
+
+5. DM the app or `@mention` it in a channel.
+
+### Rotating tokens or reconfiguring
+
+Channel config is written once on first boot so that pairings, bindings, and allowlists survive restarts. To apply a new token, delete the file and redeploy:
+
+```bash
+rm ~/.letta/channels/telegram/accounts.json   # or slack/accounts.json
+```
+
+### Multiple accounts per channel
+
+The env-var path only bootstraps a single account per channel. For multiple Telegram bots or Slack workspaces, either pre-write `~/.letta/channels/<channel>/accounts.json` manually with all accounts, or run `letta channels configure <channel>` from a shell on the service.
+
 ## Configuration
 
 | Variable | Default | Description |
@@ -101,6 +142,11 @@ If you want to pin a specific version instead of tracking latest, fork this repo
 | `LETTA_API_KEY` | optional | Your Letta API key from [app.letta.com](https://app.letta.com). Developer plans only. If unset, the server uses OAuth device flow. Required for self-hosted deployments. |
 | `ENV_NAME` | `cloud` | Name shown in the environment picker on chat.letta.com |
 | `LETTA_BASE_URL` | `https://api.letta.com` | Override for self-hosted Letta servers. |
+| `TELEGRAM_BOT_TOKEN` | — | Enables the Telegram channel on boot. |
+| `TELEGRAM_DM_POLICY` | `pairing` | `pairing`, `allowlist`, or `open`. |
+| `SLACK_BOT_TOKEN` | — | Slack bot user OAuth token (`xoxb-...`). Requires `SLACK_APP_TOKEN`. |
+| `SLACK_APP_TOKEN` | — | Slack app-level token (`xapp-...`) with `connections:write`. |
+| `SLACK_DM_POLICY` | `open` | `open` or `allowlist`. |
 
 ## Verify
 

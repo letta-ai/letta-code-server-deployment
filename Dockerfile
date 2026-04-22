@@ -21,4 +21,10 @@ RUN apt-get update && \
 
 ENV ENV_NAME="cloud"
 
-CMD ["sh", "-c", "letta server --env-name \"$ENV_NAME\" --debug"]
+# Entrypoint bootstraps Letta Code channel config (Telegram, Slack) from env
+# vars before execing `letta server`. When no channel env vars are set, it
+# starts the server exactly as before.
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+CMD ["docker-entrypoint.sh"]
