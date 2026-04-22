@@ -94,6 +94,16 @@ The Dockerfile cache-busts on every new `@letta-ai/letta-code` npm release, so a
 
 If you want to pin a specific version instead of tracking latest, fork this repo and change the install line in the Dockerfile to `bun install -g @letta-ai/letta-code@<version>`.
 
+## Channels (Telegram, Slack)
+
+To connect your remote agent to [Telegram or Slack](https://docs.letta.com/letta-code/channels):
+
+1. Open the [Letta Code desktop app](https://letta.com).
+2. Switch to your remote server in the device picker (bottom left).
+3. Open the **Channels** sidebar and add a Telegram bot or Slack app.
+
+Configuration, pairing, and binding all happen through the app's WebSocket control channel — no shell access or env vars needed on the server.
+
 ## Configuration
 
 | Variable | Default | Description |
