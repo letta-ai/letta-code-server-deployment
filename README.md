@@ -104,12 +104,15 @@ To connect your remote agent to [Telegram or Slack](https://docs.letta.com/letta
 
 Configuration, pairing, and binding all happen through the app's WebSocket control channel — no shell access or env vars needed on the server.
 
+Enabled channel adapters are restored automatically after container restarts. You should not need to edit the Railway start command or add `--channels telegram` manually.
+
 ## Configuration
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `LETTA_API_KEY` | optional | Your Letta API key from [app.letta.com](https://app.letta.com). Developer plans only. If unset, the server uses OAuth device flow. Required for self-hosted deployments. |
 | `ENV_NAME` | `cloud` | Name shown in the environment picker on chat.letta.com |
+| `LETTA_RESTORE_ENABLED_CHANNELS` | `1` | Restores enabled channel adapters from the persistent volume when the server starts. Keep this enabled for Telegram and Slack remotes. |
 | `LETTA_BASE_URL` | `https://api.letta.com` | Override for self-hosted Letta servers. |
 
 ## Verify
