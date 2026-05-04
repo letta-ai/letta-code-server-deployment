@@ -20,5 +20,6 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 ENV ENV_NAME="cloud"
+ENV LETTA_RESTORE_ENABLED_CHANNELS="1"
 
 CMD ["sh", "-c", "letta server --env-name \"$ENV_NAME\" --debug"]
