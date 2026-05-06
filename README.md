@@ -70,10 +70,24 @@ The included `fly.toml` mounts `/root`, so auth survives machine restarts.
 
 ### Railway
 
-1. Connect this repo in [Railway](https://railway.app)
-2. Add a persistent volume mounted at `/root`
-3. Deploy
-4. Open the deploy logs, find the OAuth URL, and approve it in your browser
+#### One-click template
+
+Use the **Deploy on Railway** button at the top of this README. The template includes a persistent volume mounted at `/root`.
+
+After deployment, open the deploy logs, find the OAuth URL, and approve it in your browser.
+
+#### Git-backed auto-updating deployment
+
+For deployments that should automatically pick up new Letta Code releases, connect the service to this GitHub repo instead of leaving it as a pinned template snapshot:
+
+- Repository: `letta-ai/letta-code-server-deployment`
+- Branch: `main`
+- Root directory: `/`
+- Builder: Dockerfile
+- Volume mount: `/root`
+- Automatic deploys: enabled
+
+This repo commits a `letta-code-version.txt` bump whenever a new `@letta-ai/letta-code` npm release ships. Railway then sees a normal Git commit and redeploys services connected to `main`.
 
 Or via CLI:
 
@@ -86,13 +100,17 @@ railway logs
 
 ## Updating
 
-The Dockerfile cache-busts on every new `@letta-ai/letta-code` npm release, so any redeploy after a release will pick up the latest version automatically. No config changes or `NO_CACHE=1` workarounds needed — just redeploy:
+This repo tracks the Letta Code npm release in `letta-code-version.txt`. A scheduled GitHub Actions workflow checks `@letta-ai/letta-code` and commits a version bump to `main` when a new release ships.
 
-- **Railway**: click Redeploy, or push an empty commit.
+That gives Railway a real Git commit to deploy. Any Railway service connected to this repo with automatic deploys enabled will rebuild and install the new Letta Code version without manual redeploys.
+
+Other platforms still update on rebuild:
+
+- **Railway template snapshots**: reconnect the service to `letta-ai/letta-code-server-deployment` on branch `main`, then enable automatic deploys.
 - **Fly**: `fly deploy`.
 - **Docker Compose**: `docker compose build --pull && docker compose up -d`.
 
-If you want to pin a specific version instead of tracking latest, fork this repo and change the install line in the Dockerfile to `bun install -g @letta-ai/letta-code@<version>`.
+To pin a specific version, set the Docker build arg `LETTA_CODE_VERSION=<version>` or fork this repo and edit `letta-code-version.txt`.
 
 ## Channels (Telegram, Slack)
 

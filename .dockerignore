@@ -4,6 +4,7 @@ LICENSE
 .env
 .env.example
 .git
+.github
 .gitignore
 fly.toml
 railway.json
