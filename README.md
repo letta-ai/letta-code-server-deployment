@@ -4,13 +4,15 @@
 
 Deploy a [Letta Code](https://docs.letta.com/letta-code) remote environment to any cloud platform. Runs `letta server` so your agent is always-on and accessible from [chat.letta.com](https://chat.letta.com) or the [Letta Code](https://letta.com) desktop app.
 
+This fork is tuned for remote coding agents: the image installs common CLI tools, prepares `/home/letta/Code`, and runs `letta server` as a non-root `letta` user.
+
 ## How it works
 
 `letta server` opens an outbound WebSocket to Letta Cloud. No inbound ports, no reverse proxy, no domain name needed.
 
 ## Authentication
 
-On first deploy, `letta server` starts an OAuth device flow and prints an authorization URL in the logs. Open the URL, approve the request, and the server connects. Auth tokens are persisted under `~/.letta/`, so container deployments need a persistent volume mounted at `/root` to survive restarts.
+On first deploy, `letta server` starts an OAuth device flow and prints an authorization URL in the logs. Open the URL, approve the request, and the server connects. Auth tokens are persisted under `~/.letta/`, so container deployments need a persistent volume mounted at `/home` to survive restarts.
 
 OAuth is the only authentication method on Pro, Max-lite, and Max plans. On Developer plans, you can alternatively set `LETTA_API_KEY` as an environment variable to skip OAuth.
 
@@ -25,7 +27,7 @@ docker compose logs -f
 # Check the logs for the OAuth URL and approve it in your browser
 ```
 
-The included `docker-compose.yml` mounts `letta-data` at `/root`, so auth survives container restarts.
+The included `docker-compose.yml` mounts `letta-data` at `/home`, so auth, configuration, caches, and `/home/letta/Code` workspaces survive container restarts.
 
 ## Deploy to a cloud platform
 
@@ -54,40 +56,53 @@ docker compose logs -f
 # Check the logs for the OAuth URL and approve it in your browser
 ```
 
-If you bootstrap with OAuth over SSH, the saved auth state under `/root/.letta` is reused across restarts.
+If you bootstrap with OAuth over SSH, the saved auth state under `/home/letta/.letta` is reused across restarts.
 
 ### Fly.io
 
 ```bash
 fly launch --name letta-remote --no-deploy
-fly volumes create letta_data --region sjc --size 1
+fly volumes create letta_data --region sjc --size 20
 fly deploy
 fly logs --app letta-remote
 # Check the logs for the OAuth URL and approve it in your browser
 ```
 
-The included `fly.toml` mounts `/root`, so auth survives machine restarts.
+The included `fly.toml` mounts persistent storage at `/home`, so auth and workspaces survive machine restarts.
 
 ### Railway
 
 #### One-click template
 
-Use the **Deploy on Railway** button at the top of this README. The template includes a persistent volume mounted at `/root`.
+Use the **Deploy on Railway** button at the top of this README only for the upstream template. For this fork, connect Railway to your forked repository so it uses the custom Dockerfile below.
 
 After deployment, open the deploy logs, find the OAuth URL, and approve it in your browser.
 
 #### Git-backed auto-updating deployment
 
-For deployments that should automatically pick up new Letta Code releases, connect the service to this GitHub repo instead of leaving it as a pinned template snapshot:
+For deployments that should automatically pick up new Letta Code releases and keep this non-root `/home` layout, connect the service to your fork of this GitHub repo instead of leaving it as a pinned template snapshot:
 
-- Repository: `letta-ai/letta-code-server-deployment`
+- Repository: `<your-github-owner>/letta-code-server-deployment`
 - Branch: `main`
 - Root directory: `/`
 - Builder: Dockerfile
-- Volume mount: `/root`
+- Volume mount: `/home`
+- Volume size: `20 GB` recommended for agent workspaces
 - Automatic deploys: enabled
 
 This repo commits a `letta-code-version.txt` bump whenever a new `@letta-ai/letta-code` npm release ships. Railway then sees a normal Git commit and redeploys services connected to `main`.
+
+The container starts as root only long enough to prepare the mounted volume, then drops privileges and runs `letta server` as the `letta` user with `HOME=/home/letta`. Store repositories under `/home/letta/Code`.
+
+If migrating from the upstream `/root` volume layout, copy the existing auth state before changing the Railway volume mount path. The old volume root is `/root`; after the Railway mount path changes, that same volume root becomes `/home`. Creating `/root/letta/...` before the switch therefore creates `/home/letta/...` after the switch:
+
+```bash
+mkdir -p /root/letta
+cp -a /root/.letta /root/letta/.letta 2>/dev/null || true
+cp -a /root/.config /root/letta/.config 2>/dev/null || true
+```
+
+After the same volume is mounted at `/home`, these paths become `/home/letta/.letta` and `/home/letta/.config`.
 
 Or via CLI:
 
@@ -132,6 +147,22 @@ Enabled channel adapters are restored automatically after container restarts. Yo
 | `ENV_NAME` | `cloud` | Name shown in the environment picker on chat.letta.com |
 | `LETTA_RESTORE_ENABLED_CHANNELS` | `1` | Restores enabled channel adapters from the persistent volume when the server starts. Keep this enabled for Telegram and Slack remotes. |
 | `LETTA_BASE_URL` | `https://api.letta.com` | Override for self-hosted Letta servers. |
+
+## Runtime layout
+
+| Path | Purpose |
+|------|---------|
+| `/home` | Persistent volume mount. Use a 20 GB Railway volume for team/agent work. |
+| `/home/letta` | Home directory for the non-root `letta` user. |
+| `/home/letta/.letta` | Letta auth, state, and remote environment data. |
+| `/home/letta/.config` | CLI configuration such as Worktrunk config. |
+| `/home/letta/Code` | Durable repository and worktree root for coding agents. |
+
+The image includes a system Worktrunk config for the bare-repo workspace pattern:
+
+```toml
+worktree-path = "{{ repo_path }}/../{{ branch | sanitize }}"
+```
 
 ## Verify
 

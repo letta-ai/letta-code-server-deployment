@@ -4,7 +4,7 @@ services:
     restart: always
     env_file: .env
     volumes:
-      - letta-data:/root
+      - letta-data:/home
 
 volumes:
   letta-data:
