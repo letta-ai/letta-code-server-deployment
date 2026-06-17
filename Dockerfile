@@ -3,6 +3,9 @@ FROM oven/bun:slim
 # Install Letta Code
 # git: required at runtime for memory sync
 # python3: required at runtime for skills (e.g. Discord)
+# curl/wget: common in tool and skill examples for fetching remote assets/APIs
+# jq: common in API/debug examples for inspecting JSON responses
+# nodejs: required by the installed letta CLI entrypoint
 ENV BUN_INSTALL_GLOBAL_DIR=/opt/letta-code
 
 # The GitHub workflow keeps this file at the latest published npm version.
@@ -13,7 +16,7 @@ COPY letta-code-version.txt /tmp/letta-code-version.txt
 
 RUN set -eux; \
     apt-get update; \
-    apt-get install -y git python3 make g++; \
+    apt-get install -y git python3 curl wget jq nodejs make g++; \
     version="${LETTA_CODE_VERSION:-$(cat /tmp/letta-code-version.txt)}"; \
     bun install -g "@letta-ai/letta-code@${version}"; \
     apt-get purge -y make g++; \

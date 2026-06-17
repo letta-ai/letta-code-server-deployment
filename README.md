@@ -4,6 +4,8 @@
 
 Deploy a [Letta Code](https://docs.letta.com/letta-code) remote environment to any cloud platform. Runs `letta server` so your agent is always-on and accessible from [chat.letta.com](https://chat.letta.com) or the [Letta Code](https://letta.com) desktop app.
 
+The Docker image includes common runtime utilities used by Letta Code, tools, and skills: `nodejs`, `git`, `python3`, `curl`, `wget`, and `jq`.
+
 ## How it works
 
 `letta server` opens an outbound WebSocket to Letta Cloud. No inbound ports, no reverse proxy, no domain name needed.
